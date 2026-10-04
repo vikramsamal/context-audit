@@ -260,6 +260,16 @@ The following capabilities are planned for future releases based on user feedbac
 
 ---
 
+## Disclaimer & Limitation of Liability
+
+`context-audit` is an informational diagnostic tool provided free of charge under the MIT License on an "AS IS" basis without warranty of any kind. 
+
+- **Heuristic Estimations**: Token counts, category classifications, and duplicate evaluations are approximations intended for general developer guidance.
+- **User Responsibility**: Users remain solely responsible for reviewing their codebase and making all decisions regarding which files are shared with, indexed by, or excluded from third-party AI agents and LLM services.
+- **No Liability**: The authors and maintainers assume no liability or responsibility for any direct, indirect, incidental, or consequential damages resulting from the use of this tool.
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.

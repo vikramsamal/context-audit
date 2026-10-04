@@ -177,3 +177,17 @@ def test_scanner_unreadable_file(tmp_path: Path):
                 assert info.error_message is not None
     finally:
         os.chmod(str(unreadable), 0o644)
+
+
+def test_scanner_oversized_file_streaming(tmp_path: Path):
+    large_file = tmp_path / "large.txt"
+    large_file.write_text("line of content\n" * 100, encoding="utf-8")
+
+    # Set max_file_size to 200 bytes so streaming path is triggered
+    scanner = Scanner(str(tmp_path), max_file_size=200)
+    results = list(scanner.scan())
+    assert len(results) == 1
+    info, sample = results[0]
+    assert info.size_bytes > 200
+    assert info.content_hash is not None
+    assert len(sample) > 0

@@ -425,14 +425,36 @@ class Scanner:
                         "",
                     )
 
-                # For text files, calculate full sha256 hash and read text metrics
+                # For text files, calculate sha256 hash using chunked streaming
                 hasher = hashlib.sha256()
                 hasher.update(initial_bytes)
 
-                remaining = f.read()
-                hasher.update(remaining)
+                # Decode sample for rule headers
+                try:
+                    sample_text = initial_bytes.decode("utf-8")
+                except UnicodeDecodeError:
+                    sample_text = initial_bytes.decode("latin-1", errors="replace")
+
+                content_sample = sample_text[:4096]
+
+                # Stream remaining content in 64KB chunks to keep memory usage O(1)
+                chunk_size = 65536
+                remaining_bytes_count = 0
+                newline_count = initial_bytes.count(b"\n")
+                collected_chunks = [initial_bytes] if size_bytes <= self.max_file_size else []
+
+                while True:
+                    chunk = f.read(chunk_size)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+                    remaining_bytes_count += len(chunk)
+                    newline_count += chunk.count(b"\n")
+                    if size_bytes <= self.max_file_size:
+                        collected_chunks.append(chunk)
+
                 content_hash = hasher.hexdigest()
-                full_bytes = initial_bytes + remaining
+
         except OSError as e:
             return (
                 FileInfo(
@@ -447,29 +469,34 @@ class Scanner:
                 "",
             )
 
-        # Decode text safely
-        try:
-            text = full_bytes.decode("utf-8")
-        except UnicodeDecodeError:
+        # For files under max_file_size, decode full text for exact char/line counts
+        if size_bytes <= self.max_file_size:
+            full_bytes = b"".join(collected_chunks)
             try:
-                text = full_bytes.decode("latin-1")
-            except UnicodeDecodeError as e:
-                return (
-                    FileInfo(
-                        path=file_path,
-                        relative_path=rel_path,
-                        extension=ext,
-                        size_bytes=size_bytes,
-                        is_unreadable=True,
-                        is_symlink=is_symlink,
-                        error_message=f"Text decoding failed: {e}",
-                    ),
-                    "",
-                )
+                text = full_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                try:
+                    text = full_bytes.decode("latin-1")
+                except UnicodeDecodeError as e:
+                    return (
+                        FileInfo(
+                            path=file_path,
+                            relative_path=rel_path,
+                            extension=ext,
+                            size_bytes=size_bytes,
+                            is_unreadable=True,
+                            is_symlink=is_symlink,
+                            error_message=f"Text decoding failed: {e}",
+                        ),
+                        "",
+                    )
 
-        char_count = len(text)
-        line_count = len(text.splitlines()) if char_count > 0 else 0
-        content_sample = text[:4096]
+            char_count = len(text)
+            line_count = len(text.splitlines()) if char_count > 0 else 0
+        else:
+            # For massive files exceeding threshold, estimate char count from byte size
+            char_count = size_bytes
+            line_count = newline_count
 
         return (
             FileInfo(
