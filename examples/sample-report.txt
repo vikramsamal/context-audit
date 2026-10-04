@@ -1,0 +1,55 @@
+Context Audit
+==============
+
+Project: ./examples/sample-project
+
+Files scanned:                  48
+Text files:                     42
+Binary files skipped:            6
+
+Total text size:         384.20 KB
+Estimated tokens:           96,050
+
+Potentially unnecessary:    54,200 tokens
+Potential useful context:   41,850 tokens
+
+Context by file type
+------------------------------
+.ts                 18 files     38,400 tokens ( 40.0%)
+.json                8 files     32,100 tokens ( 33.4%)
+.py                 10 files     18,250 tokens ( 19.0%)
+.md                  6 files      7,300 tokens (  7.6%)
+
+Top context-heavy files
+------------------------------
+   28,400  package-lock.json [unnecessary]
+   14,200  src/generated/api_client.ts [unnecessary]
+    8,200  docs/architecture.md
+    6,400  src/server.ts
+    4,100  tests/fixtures/mock_data.json [unnecessary]
+    2,800  src/auth/service.py
+    2,100  src/auth/jwt.py
+    1,800  README.md
+    1,200  pyproject.toml
+      850  src/utils/helpers.ts
+
+Potential context issues
+------------------------------
+⚠ 1 dependency lockfiles (~28,400 tokens)
+⚠ 1 generated files (~14,200 tokens)
+⚠ 1 large data / snapshot files (~4,100 tokens)
+⚠ 1 duplicate file sets (~7,500 duplicate tokens)
+
+Potential duplicate files
+------------------------------
+Duplicate content (2 copies, 7,500 redundant tokens):
+  • config/defaults.json
+  • backup/config_backup.json
+
+Suggested next step
+------------------------------
+Review the flagged files before allowing an AI coding
+agent to index or include them in context.
+
+No files were modified.
+No data was uploaded.
