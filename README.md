@@ -47,22 +47,19 @@ However, modern repositories are filled with files that dilute context, waste to
 
 ## Installation
 
-### From GitHub
+> 💡 **Where to install:** You only need to install `context-audit` **once globally** on your machine (e.g., via `pipx` or your global Python environment). You do **not** need to install it inside every single project repository. Once installed, you can point it to **any** directory on your system.
+
+### Option 1: Install from GitHub (Direct)
 ```bash
 pip install git+https://github.com/vikramsamal/context-audit.git
 ```
 
-### Using `pipx` (Recommended for global CLI)
+### Option 2: Using `pipx` (Recommended for isolated global CLI)
 ```bash
-pipx install context-audit
+pipx install git+https://github.com/vikramsamal/context-audit.git
 ```
 
-### Using `pip`
-```bash
-pip install context-audit
-```
-
-### Local Development Mode
+### Option 3: Local Development Mode
 ```bash
 git clone https://github.com/vikramsamal/context-audit.git
 cd context-audit
@@ -71,17 +68,32 @@ pip install -e .
 
 ---
 
-## Usage
+## Quick Start (30 Seconds)
+
+1. **Open a terminal** and navigate to any repository or folder:
+   ```bash
+   cd ~/code/my-project
+   ```
+
+2. **Run `context-audit`**:
+   ```bash
+   context-audit .
+   ```
+   *(Or pass any absolute or relative path: `context-audit /path/to/any-project`)*
+
+---
+
+## Usage Guide
 
 ### Basic Audit
-Run in the current directory:
+Run on the current directory:
 ```bash
 context-audit .
 ```
 
-### Audit a Specific Path
+### Audit Any Specific Project Path
 ```bash
-context-audit /path/to/project
+context-audit /path/to/my-other-project
 ```
 
 ### Show Top 20 Context-Heavy Files
