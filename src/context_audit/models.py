@@ -169,6 +169,7 @@ class AuditReport:
     warnings: list[str]
     chars_per_token: float
     scan_duration_ms: float
+    unreadable_files: list[FileInfo] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -194,5 +195,13 @@ class AuditReport:
             "category_breakdown": [c.to_dict() for c in self.category_summaries],
             "duplicates": [d.to_dict() for d in self.duplicate_groups],
             "total_duplicate_wasted_tokens": self.total_duplicate_wasted_tokens,
+            "unreadable_files": [
+                {
+                    "path": f.relative_path,
+                    "error": f.error_message or "Unreadable file",
+                    "is_symlink": f.is_symlink,
+                }
+                for f in self.unreadable_files
+            ],
             "warnings": self.warnings,
         }

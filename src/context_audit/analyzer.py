@@ -57,6 +57,7 @@ class AuditAnalyzer:
         binary_files_skipped = 0
         unreadable_files_count = 0
         symlinks_skipped = 0
+        unreadable_files: list[FileInfo] = []
         text_files: list[FileInfo] = []
 
         # Stream and process files
@@ -69,6 +70,7 @@ class AuditAnalyzer:
 
             if file_info.is_unreadable:
                 unreadable_files_count += 1
+                unreadable_files.append(file_info)
                 if file_info.is_symlink:
                     symlinks_skipped += 1
                 continue
@@ -248,4 +250,5 @@ class AuditAnalyzer:
             warnings=warnings,
             chars_per_token=self.chars_per_token,
             scan_duration_ms=duration_ms,
+            unreadable_files=unreadable_files,
         )

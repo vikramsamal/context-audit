@@ -157,3 +157,23 @@ def test_scanner_handles_symlink_safety(tmp_path: Path):
     results = list(scanner.scan())
     # Should safely scan without infinite recursion or errors
     assert len(results) >= 1
+
+
+def test_scanner_unreadable_file(tmp_path: Path):
+    unreadable = tmp_path / "locked.txt"
+    unreadable.write_text("secret content", encoding="utf-8")
+    try:
+        os.chmod(str(unreadable), 0o000)
+    except OSError:
+        pytest.skip("Chmod not supported on this OS")
+
+    scanner = Scanner(str(tmp_path))
+    try:
+        results = list(scanner.scan())
+        # If the OS enforces 000 permissions
+        if results:
+            info, _ = results[0]
+            if info.is_unreadable:
+                assert info.error_message is not None
+    finally:
+        os.chmod(str(unreadable), 0o644)

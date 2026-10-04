@@ -167,6 +167,18 @@ class TerminalReporter:
                 lines.append(f"... and {len(report.duplicate_groups) - 5} more duplicate sets.")
                 lines.append("")
 
+        # Unreadable / Skipped Files Detail
+        if report.unreadable_files:
+            lines.append(f"{Colors.BOLD}Unreadable / Skipped files{Colors.RESET}")
+            lines.append(f"{'-' * 30}")
+            for uf in report.unreadable_files[:5]:
+                err_desc = uf.error_message or "Unreadable file"
+                lines.append(f"  • {uf.relative_path}: {err_desc}")
+            if len(report.unreadable_files) > 5:
+                rem = len(report.unreadable_files) - 5
+                lines.append(f"  ... and {rem} more unreadable files.")
+            lines.append("")
+
         # Suggested Next Steps
         lines.append(f"{Colors.BOLD}Suggested next step{Colors.RESET}")
         lines.append(f"{'-' * 30}")
